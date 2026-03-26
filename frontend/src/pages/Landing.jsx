@@ -3,6 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import photo from '../assets/unnamed.jpg';
+
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
@@ -108,7 +110,7 @@ export default function Landing() {
             <img
               className="relative rounded-[2.5rem] outline outline-1 outline-[#E0C0B1]/30 shadow-2xl w-full object-cover h-[320px] sm:h-[420px] md:h-[600px]"
               alt="Premium smartphone mockup showing a high-end restaurant digital menu"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAs6x9xwTbxd7rVP2vsYeVmUZj2MRTbS01xjhULWklWFIO3QMxwOfnXgSOZe5NrHiFLJT__BEbfx3WYq-2wAyE5j8L3dP9nJiGYxQT8u6AYovU3kAhKFsEKwY_RvPFZRtrurrbHnB30Ev3_cgk15ftertBv9t3hDQJcKWkYSOuOGKP3_DZbcL-o09clsNIXBUwIBYF6b4uKBLlGyhCYfp5xgzrVXXWfrowGlo23yzQQ1IgDfEX1HDLtSnNV1-9GVxW6HfcaSznIQ6xZ"
+              src={photo}
             />
             <div className="hidden md:block absolute -top-10 -right-10 bg-white p-6 rounded-2xl shadow-xl outline outline-1 outline-[#E0C0B1]/30 animate-bounce">
               <span className="material-symbols-outlined text-[#9D4300] text-5xl [font-variation-settings:'FILL'_1]">qr_code_2</span>
