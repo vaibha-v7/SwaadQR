@@ -2,16 +2,43 @@ const Dish = require("../models/dishes");
 const Restaurant = require("../models/restaurant");
 const mongoose = require("mongoose");
 const QRCode = require("qrcode");
+const { uploadImageToImageKit } = require("../services/imagekit");
 
+
+const toBoolean = (value, fallback = true) => {
+  if (value === undefined) return fallback;
+  if (typeof value === "boolean") return value;
+  return String(value).toLowerCase() === "true";
+};
+
+
+const toOptionalNumber = (value) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? undefined : parsed;
+};
 
 
 exports.addDish = async (req, res) => {
   try {
     const ownerId = req.ownerId;
-    const { restaurantId } = req.body;
+    const { restaurantId, dishName, description, price, category } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
       return res.status(400).json({ message: "Invalid restaurantId" });
+    }
+
+    if (req.body.image) {
+      return res.status(400).json({ message: "Please upload an image file instead of image URL" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Dish image is required" });
+    }
+
+    const parsedPrice = toOptionalNumber(price);
+    if (parsedPrice === undefined) {
+      return res.status(400).json({ message: "price is required and must be a valid number" });
     }
 
     const restaurant = await Restaurant.findOne({ _id: restaurantId, ownerId });
@@ -19,7 +46,18 @@ exports.addDish = async (req, res) => {
       return res.status(403).json({ message: "You can only add dishes to your own restaurant" });
     }
 
-    const dish = new Dish(req.body);
+    const imageUrl = await uploadImageToImageKit(req.file.buffer, req.file.originalname, `swaadqr/restaurants/${restaurantId}`);
+
+    const dish = new Dish({
+      restaurantId,
+      dishName,
+      description,
+      image: imageUrl,
+      price: parsedPrice,
+      category,
+      isVeg: toBoolean(req.body.isVeg, true)
+    });
+
     const savedDish = await dish.save();
 
     res.status(201).json(savedDish);
@@ -87,6 +125,10 @@ exports.updateDish = async (req, res) => {
       return res.status(400).json({ message: "restaurantId cannot be updated" });
     }
 
+    if (req.body.image) {
+      return res.status(400).json({ message: "Please upload an image file instead of image URL" });
+    }
+
     const dish = await Dish.findById(req.params.id);
     if (!dish) {
       return res.status(404).json({ message: "Dish not found" });
@@ -97,9 +139,30 @@ exports.updateDish = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to update this dish" });
     }
 
+    const updatePayload = {
+      ...req.body
+    };
+
+    if (Object.prototype.hasOwnProperty.call(updatePayload, "price")) {
+      const parsedPrice = toOptionalNumber(updatePayload.price);
+      if (parsedPrice === undefined) {
+        return res.status(400).json({ message: "price must be a valid number" });
+      }
+      updatePayload.price = parsedPrice;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(updatePayload, "isVeg")) {
+      updatePayload.isVeg = toBoolean(updatePayload.isVeg, dish.isVeg);
+    }
+
+    if (req.file) {
+      const imageUrl = await uploadImageToImageKit(req.file.buffer, req.file.originalname, `swaadqr/restaurants/${dish.restaurantId}`);
+      updatePayload.image = imageUrl;
+    }
+
     const updatedDish = await Dish.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updatePayload,
       { new: true }
     );
 

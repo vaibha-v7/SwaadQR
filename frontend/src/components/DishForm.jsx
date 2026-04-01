@@ -6,7 +6,8 @@ export default function DishForm({ initial, onSubmit, onCancel }) {
   const [form, setForm] = useState({
     dishName: "",
     description: "",
-    image: "",
+    imageFile: null,
+    existingImage: "",
     price: "",
     category: "Starter",
     isVeg: true,
@@ -17,7 +18,8 @@ export default function DishForm({ initial, onSubmit, onCancel }) {
       setForm({
         dishName: initial.dishName || "",
         description: initial.description || "",
-        image: initial.image || "",
+        imageFile: null,
+        existingImage: initial.image || "",
         price: initial.price ?? "",
         category: initial.category || "Starter",
         isVeg: initial.isVeg ?? true,
@@ -28,6 +30,11 @@ export default function DishForm({ initial, onSubmit, onCancel }) {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setForm((prev) => ({ ...prev, imageFile: file }));
   };
 
   const handleSubmit = (e) => {
@@ -59,13 +66,19 @@ export default function DishForm({ initial, onSubmit, onCancel }) {
           rows={2}
           className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
-        <input
-          name="image"
-          value={form.image}
-          onChange={handleChange}
-          placeholder="Image URL (optional)"
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-        />
+        <div className="space-y-2">
+          <input
+            name="image"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            required={!initial}
+            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-primary file:font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+          {form.existingImage && !form.imageFile && (
+            <p className="text-xs text-gray-500">Current image will be kept unless you select a new file.</p>
+          )}
+        </div>
         <input
           name="price"
           value={form.price}

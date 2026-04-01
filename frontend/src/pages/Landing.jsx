@@ -110,7 +110,7 @@ export default function Landing() {
             <img
               className="relative rounded-[2.5rem] outline outline-1 outline-[#E0C0B1]/30 shadow-2xl w-full object-cover h-[320px] sm:h-[420px] md:h-[600px]"
               alt="Premium smartphone mockup showing a high-end restaurant digital menu"
-              src={photo}
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaJeeekxf_D6wn_NwEckCbW_Z9bbWaclXzh0gAFSRpfs3SsNTYGT16KVhto50pdoY-BrnzFXCf-GUImi2lOhVBQmbIcM3vgqUM1U_WHOp2sF5ggKCEqXhozTdDMqY3fPIJ4gpVUPmL8ahcR_Oq50hJ9O0BlGUOxnw7r-nk3R519JCqWjvFUnT7b0hnbIZ0rmzsvrILSP8H4Suh8WbK-gbyvpWF3o7c2AcyW2BguzVAPJ8vrBGuQlnK_ZlJOQvpVNmgD3mTKOfQpFhF"
             />
             <div className="hidden md:block absolute -top-10 -right-10 bg-white p-6 rounded-2xl shadow-xl outline outline-1 outline-[#E0C0B1]/30 animate-bounce">
               <span className="material-symbols-outlined text-[#9D4300] text-5xl [font-variation-settings:'FILL'_1]">qr_code_2</span>

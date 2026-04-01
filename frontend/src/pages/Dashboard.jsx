@@ -42,7 +42,18 @@ export default function Dashboard() {
 
   const handleAddDish = async (form) => {
     try {
-      await api.post("/swaad/dishes/adddish", { ...form, restaurantId });
+      const formData = new FormData();
+      formData.append("restaurantId", restaurantId);
+      formData.append("dishName", form.dishName);
+      formData.append("description", form.description || "");
+      formData.append("price", String(form.price));
+      formData.append("category", form.category || "Starter");
+      formData.append("isVeg", String(form.isVeg));
+      if (form.imageFile) {
+        formData.append("image", form.imageFile);
+      }
+
+      await api.post("/swaad/dishes/adddish", formData);
       toast.success("Dish added!");
       setShowForm(false);
       loadDishes();
@@ -53,7 +64,17 @@ export default function Dashboard() {
 
   const handleUpdateDish = async (form) => {
     try {
-      await api.put(`/swaad/dishes/update/${editingDish._id}`, form);
+      const formData = new FormData();
+      formData.append("dishName", form.dishName);
+      formData.append("description", form.description || "");
+      formData.append("price", String(form.price));
+      formData.append("category", form.category || "Starter");
+      formData.append("isVeg", String(form.isVeg));
+      if (form.imageFile) {
+        formData.append("image", form.imageFile);
+      }
+
+      await api.put(`/swaad/dishes/update/${editingDish._id}`, formData);
       toast.success("Dish updated!");
       setShowForm(false);
       setEditingDish(null);

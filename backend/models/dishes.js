@@ -17,7 +17,7 @@ const dishSchema = new mongoose.Schema(
       trim: true,
     },
     image: {
-      type: String, // AWS S3 bucket URL 
+      type: String, //  imagekit.io using 
     },
     price: {
       type: Number,
