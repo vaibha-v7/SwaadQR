@@ -3,6 +3,7 @@ const Restaurant = require("../models/restaurant");
 const mongoose = require("mongoose");
 const QRCode = require("qrcode");
 const { uploadImageToImageKit } = require("../services/imagekit");
+const { generateDishDescription } = require("../services/dish-description");
 
 
 const toBoolean = (value, fallback = true) => {
@@ -77,6 +78,26 @@ exports.getDishesByRestaurant = async (req, res) => {
     res.json(dishes);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.generateDishDescriptionSuggestion = async (req, res) => {
+  try {
+    const { dishName, category, isVeg } = req.body;
+
+    if (!dishName || !String(dishName).trim()) {
+      return res.status(400).json({ message: "dishName is required" });
+    }
+
+    const suggestion = await generateDishDescription({
+      dishName: String(dishName).trim(),
+      category: String(category || "Dish").trim(),
+      isVeg: toBoolean(isVeg, true)
+    });
+
+    return res.json({ description: suggestion });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to generate description" });
   }
 };
 

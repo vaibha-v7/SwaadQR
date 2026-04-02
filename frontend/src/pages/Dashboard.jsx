@@ -84,6 +84,26 @@ export default function Dashboard() {
     }
   };
 
+  const handleGenerateDescription = async ({ dishName, category, isVeg }) => {
+    try {
+      const { data } = await api.post("/swaad/dishes/generate-description", {
+        dishName,
+        category,
+        isVeg
+      });
+
+      if (!data?.description) {
+        throw new Error("No description generated");
+      }
+
+      toast.success("Description generated");
+      return data.description;
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to generate description");
+      return "";
+    }
+  };
+
   const handleDeleteDish = async () => {
     try {
       await api.delete(`/swaad/dishes/delete/${deleteDishId}`);
@@ -193,6 +213,7 @@ export default function Dashboard() {
         <DishForm
           initial={editingDish}
           onSubmit={editingDish ? handleUpdateDish : handleAddDish}
+          onGenerateDescription={handleGenerateDescription}
           onCancel={() => { setShowForm(false); setEditingDish(null); }}
         />
       )}

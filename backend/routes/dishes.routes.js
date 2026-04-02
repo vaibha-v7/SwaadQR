@@ -6,6 +6,7 @@ const { dishImageUpload } = require("../middleware/upload.middleware");
 const {
   addDish,
   getDishesByRestaurant,
+  generateDishDescriptionSuggestion,
   generateRestaurantDishesQR,
   updateDish,
   deleteDish
@@ -14,6 +15,8 @@ const {
 
 
 router.post("/adddish", authenticate, dishImageUpload, addDish);
+
+router.post("/generate-description", authenticate, generateDishDescriptionSuggestion);
 
 router.get("/restaurant/:restaurantId", getDishesByRestaurant);
 
