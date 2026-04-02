@@ -13,12 +13,30 @@ const ownerSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true
+      required: function () {
+        return this.provider !== "google";
+      },
+      default: null
+    },
+    provider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local"
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      default: null
     },
     phone_no: {
       type: String,
-      required: true,
-      unique: true
+      required: function () {
+        return this.provider !== "google";
+      },
+      unique: true,
+      sparse: true,
+      default: null
     },
     isEmailVerified: {
       type: Boolean,

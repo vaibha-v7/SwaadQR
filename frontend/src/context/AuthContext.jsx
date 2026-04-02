@@ -32,6 +32,13 @@ export function AuthProvider({ children }) {
     return data;
   };
 
+  const updateProfile = async (payload) => {
+    const { data } = await api.patch("/swaad/owner/profile", payload);
+    setOwner(data.owner);
+    setRestaurants((prev) => prev);
+    return data;
+  };
+
   const logout = async () => {
     await api.post("/swaad/owner/logout");
     setOwner(null);
@@ -40,7 +47,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ owner, restaurants, setRestaurants, loading, login, logout, isAuthenticated: !!owner, fetchProfile }}
+      value={{ owner, restaurants, setRestaurants, loading, login, logout, updateProfile, isAuthenticated: !!owner, fetchProfile }}
     >
       {children}
     </AuthContext.Provider>

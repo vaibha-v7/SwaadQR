@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import api from "../api/axios";
 
 export default function Login() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
@@ -12,6 +13,9 @@ export default function Login() {
   if (!authLoading && isAuthenticated) return <Navigate to="/restaurants" replace />;
 
   const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleGoogleLogin = () => {
+    window.location.href = `${api.defaults.baseURL}/auth/google`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +39,13 @@ export default function Login() {
         <input name="password" value={form.password} onChange={handleChange} placeholder="Password" type="password" required className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40" />
         <button type="submit" disabled={loading} className="w-full bg-primary text-white font-semibold py-2.5 rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50 cursor-pointer">
           {loading ? "Logging in..." : "Login"}
+        </button>
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full border border-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          Continue with Google
         </button>
         <p className="text-center text-sm text-gray-500">
           Don't have an account?{" "}

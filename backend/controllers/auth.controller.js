@@ -6,6 +6,24 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const resend = require("../services/resend");
 
+const issueToken = (owner) => {
+  return jwt.sign(
+    { ownerId: owner._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+};
+
+const setAuthCookie = (res, token) => {
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+};
+
 exports.register = async (req, res) => {
   try {
     const { name, email, password, phone_no } = req.body;
@@ -24,6 +42,7 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      provider: "local",
       phone_no,
       emailToken,
       isEmailVerified: false
@@ -94,36 +113,50 @@ exports.login = async (req, res) => {
         message: "Please verify your email first"
       });
     }
+
+    if (!owner.password) {
+      return res.status(400).json({
+        message: "This account uses Google sign-in. Please continue with Google."
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, owner.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign(
-      { ownerId: owner._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    const token = issueToken(owner);
+    setAuthCookie(res, token);
     res.status(200).json({
       message: "Login successful",
       owner: {
         id: owner._id,
         name: owner.name,
         email: owner.email,
-        phone_no: owner.phone_no
+        phone_no: owner.phone_no,
+        provider: owner.provider
       }
     });
   } catch (err) {
     res.status(500).json({ message: "Login failed" });
   }
 }
+
+exports.completeGoogleAuth = async (req, res) => {
+  try {
+    const owner = req.user;
+
+    if (!owner) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=google`);
+    }
+
+    const token = issueToken(owner);
+    setAuthCookie(res, token);
+
+    return res.redirect(`${process.env.FRONTEND_URL}/restaurants`);
+  } catch (err) {
+    return res.redirect(`${process.env.FRONTEND_URL}/login?error=google`);
+  }
+};
 
 exports.logout = (req, res) => {
   const isProduction = process.env.NODE_ENV === "production";
@@ -153,5 +186,57 @@ exports.profile = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch profile" });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const ownerId = req.ownerId;
+    const { name, phone_no } = req.body;
+
+    const owner = await Owner.findById(ownerId);
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found" });
+    }
+
+    if (typeof name === "string") {
+      const trimmedName = name.trim();
+      if (!trimmedName) {
+        return res.status(400).json({ message: "Name cannot be empty" });
+      }
+      owner.name = trimmedName;
+    }
+
+    if (typeof phone_no === "string") {
+      const trimmedPhone = phone_no.trim();
+
+      if (trimmedPhone) {
+        const existingOwner = await Owner.findOne({
+          phone_no: trimmedPhone,
+          _id: { $ne: ownerId }
+        });
+
+        if (existingOwner) {
+          return res.status(400).json({ message: "Phone number already in use" });
+        }
+
+        owner.phone_no = trimmedPhone;
+      } else if (owner.provider === "local") {
+        return res.status(400).json({ message: "Phone number is required for local accounts" });
+      } else {
+        owner.phone_no = null;
+      }
+    }
+
+    await owner.save();
+
+    const updatedOwner = await Owner.findById(ownerId).select("-password");
+
+    return res.json({
+      message: "Profile updated successfully",
+      owner: updatedOwner
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to update profile" });
   }
 };

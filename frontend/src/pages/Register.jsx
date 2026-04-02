@@ -9,6 +9,10 @@ export default function Register() {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${api.defaults.baseURL}/auth/google`;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone_no") {
@@ -90,6 +94,13 @@ export default function Register() {
         </div>
         <button type="submit" disabled={loading} className="w-full bg-primary text-white font-semibold py-2.5 rounded-xl hover:bg-primary-dark transition-colors disabled:opacity-50 cursor-pointer">
           {loading ? "Registering..." : "Register"}
+        </button>
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full border border-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          Continue with Google
         </button>
         <p className="text-center text-sm text-gray-500">
           Already have an account?{" "}

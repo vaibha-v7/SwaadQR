@@ -2,11 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
+const passport = require("passport");
 const connectDB = require("./config/db");
 const ownerroutes = require("./routes/auth.routes");
+const googleRoutes = require("./routes/google.routes");
 const restroutes = require("./routes/rest.routes");
 const dishesroutes = require("./routes/dishes.routes");
 const cookieParser = require("cookie-parser");
+
+require("./config/passport");
 
 const app = express();
 connectDB();
@@ -32,8 +36,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(passport.initialize());
 
 
+app.use("/auth", googleRoutes);
 app.use("/swaad/owner", ownerroutes);
 app.use("/swaad/restaurant", restroutes);
 app.use("/swaad/dishes", dishesroutes);
