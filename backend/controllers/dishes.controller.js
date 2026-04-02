@@ -122,7 +122,7 @@ exports.generateRestaurantDishesQR = async (req, res) => {
     const qrBuffer = await QRCode.toBuffer(menuUrl, {
       type: "png",
       width: 400,
-      margin: 2,
+      margin: 0,
       errorCorrectionLevel: "H"
     });
 

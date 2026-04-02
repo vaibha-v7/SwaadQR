@@ -28,9 +28,9 @@ export default function QRCodeDisplay({ restaurantId }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center gap-4">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex flex-col items-center gap-4">
       <h3 className="font-bold text-lg">Menu QR Code</h3>
-      {qrUrl && <img src={qrUrl} alt="Menu QR" className="w-52 h-52 rounded-xl" />}
+      {qrUrl && <img src={qrUrl} alt="Menu QR" className="w-44 h-44 sm:w-48 sm:h-48 object-contain" />}
       <div className="flex gap-3">
         <button
           onClick={generate}
