@@ -1,25 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import toast from "react-hot-toast";
 import RestaurantForm from "../components/RestaurantForm";
 import ConfirmModal from "../components/ConfirmModal";
-import gsap from "gsap";
 
 export default function Restaurants() {
   const { restaurants, fetchProfile } = useAuth();
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".rest-header", { y: 30, opacity: 0, duration: 0.6, ease: "power3.out" });
-      gsap.from(".rest-card", { y: 40, opacity: 0, duration: 0.5, stagger: 0.12, delay: 0.2, ease: "power2.out" });
-    });
-    return () => ctx.revert();
-  }, [restaurants]);
 
   const handleRegister = async (form) => {
     try {
