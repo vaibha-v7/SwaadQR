@@ -133,7 +133,7 @@ export default function Restaurants() {
                   <div className="mt-auto flex flex-col gap-3">
                     <button
                       onClick={() => navigate(`/dashboard/${r._id}`)}
-                      className="rounded-xl bg-gradient-to-r from-primary to-primary-dark px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-200/60 transition hover:opacity-90 active:scale-95 cursor-pointer"
+                      className="rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-200/60 transition hover:bg-primary-dark active:scale-95 cursor-pointer"
                     >
                       Manage Menu & QR
                     </button>
@@ -153,7 +153,7 @@ export default function Restaurants() {
             onClick={() => setShowForm(true)}
             className="rest-card flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-orange-200/70 bg-[#f3f3f3] p-12 text-center transition hover:bg-white cursor-pointer"
           >
-            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-orange-100 text-4xl text-orange-600 transition group-hover:scale-110">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-4xl text-white transition group-hover:scale-110">
               +
             </div>
             <h3 className="text-xl font-bold text-zinc-900">Expand Your Empire</h3>
@@ -177,7 +177,7 @@ export default function Restaurants() {
 
       <button
         onClick={() => setShowForm(true)}
-        className="fixed bottom-8 right-8 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary-dark text-3xl font-bold text-white shadow-[0_24px_48px_-10px_rgba(249,115,22,0.5)] transition hover:scale-110 active:scale-95 cursor-pointer"
+        className="fixed bottom-8 right-8 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-3xl font-bold text-white shadow-[0_24px_48px_-10px_rgba(249,115,22,0.5)] transition hover:scale-110 hover:bg-primary-dark active:scale-95 cursor-pointer"
         aria-label="Add New Restaurant"
       >
         +
