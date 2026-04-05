@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/auth-context";
 import api from "../api/axios";
 import toast from "react-hot-toast";
 import RestaurantForm from "../components/RestaurantForm";

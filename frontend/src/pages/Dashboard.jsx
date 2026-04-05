@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/auth-context";
 import api from "../api/axios";
 import toast from "react-hot-toast";
 import QRCodeDisplay from "../components/QRCodeDisplay";
