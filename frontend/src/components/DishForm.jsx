@@ -13,6 +13,7 @@ export default function DishForm({ initial, onSubmit, onCancel, onGenerateDescri
     isVeg: true,
   });
   const [generating, setGenerating] = useState(false);
+  const [imagePreview, setImagePreview] = useState("");
 
   useEffect(() => {
     if (initial) {
@@ -27,6 +28,20 @@ export default function DishForm({ initial, onSubmit, onCancel, onGenerateDescri
       });
     }
   }, [initial]);
+
+  useEffect(() => {
+    if (!form.imageFile) {
+      setImagePreview("");
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(form.imageFile);
+    setImagePreview(previewUrl);
+
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [form.imageFile]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -181,6 +196,16 @@ export default function DishForm({ initial, onSubmit, onCancel, onGenerateDescri
 
               {form.existingImage && !form.imageFile && (
                 <p className="mt-3 text-xs text-slate-500">Current image will be kept unless you select a new file.</p>
+              )}
+
+              {(imagePreview || form.existingImage) && (
+                <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <img
+                    src={imagePreview || form.existingImage}
+                    alt="Dish preview"
+                    className="h-52 w-full object-cover"
+                  />
+                </div>
               )}
             </div>
 
