@@ -116,7 +116,7 @@ exports.generateRestaurantDishesQR = async (req, res) => {
       return res.status(403).json({ message: "Not authorized for this restaurant" });
     }
 
-    const menuBaseUrl = (process.env.MENU_BASE_URL || "http://localhost:4000/menu").replace(/\/$/, "");
+    const menuBaseUrl = (process.env.MENU_BASE_URL).replace(/\/$/, "");
     const menuUrl = `${menuBaseUrl}/${restaurantId}`;
 
     const qrBuffer = await QRCode.toBuffer(menuUrl, {
