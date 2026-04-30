@@ -6,6 +6,19 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const resend = require("../services/resend");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
+const frontendUrls = [
+  ...(process.env.FRONTEND_URLS || "").split(","),
+  process.env.FRONTEND_URL,
+  "http://localhost:4000"
+]
+  .filter(Boolean)
+  .map((url) => url.trim().replace(/\/$/, ""));
+
+const primaryFrontendUrl = frontendUrls[0];
+
 const issueToken = (owner) => {
   return jwt.sign(
     { ownerId: owner._id },
@@ -15,13 +28,23 @@ const issueToken = (owner) => {
 };
 
 const setAuthCookie = (res, token) => {
-  const isProduction = process.env.NODE_ENV === "production";
-  res.cookie("token", token, {
+  const useCrossSiteCookie = process.env.CROSS_SITE_COOKIE === "true" || process.env.NODE_ENV === "production";
+  const cookieSecure = process.env.COOKIE_SECURE === "true" || useCrossSiteCookie;
+  const cookieDomain = process.env.COOKIE_DOMAIN;
+
+  const cookieOptions = {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    secure: cookieSecure,
+    sameSite: useCrossSiteCookie ? "none" : "lax",
+    path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000
-  });
+  };
+
+  if (cookieDomain) {
+    cookieOptions.domain = cookieDomain;
+  }
+
+  res.cookie("token", token, cookieOptions);
 };
 
 exports.register = async (req, res) => {
@@ -146,25 +169,35 @@ exports.completeGoogleAuth = async (req, res) => {
     const owner = req.user;
 
     if (!owner) {
-      return res.redirect(`${process.env.FRONTEND_URL}/login?error=google`);
+      return res.redirect(`${primaryFrontendUrl}/login?error=google`);
     }
 
     const token = issueToken(owner);
     setAuthCookie(res, token);
 
-    return res.redirect(`${process.env.FRONTEND_URL}/restaurants`);
+    return res.redirect(`${primaryFrontendUrl}/restaurants`);
   } catch (err) {
-    return res.redirect(`${process.env.FRONTEND_URL}/login?error=google`);
+    return res.redirect(`${primaryFrontendUrl}/login?error=google`);
   }
 };
 
 exports.logout = (req, res) => {
-  const isProduction = process.env.NODE_ENV === "production";
-  res.clearCookie("token", {
+  const useCrossSiteCookie = process.env.CROSS_SITE_COOKIE === "true" || process.env.NODE_ENV === "production";
+  const cookieSecure = process.env.COOKIE_SECURE === "true" || useCrossSiteCookie;
+  const cookieDomain = process.env.COOKIE_DOMAIN;
+
+  const clearOptions = {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax"
-  });
+    secure: cookieSecure,
+    sameSite: useCrossSiteCookie ? "none" : "lax",
+    path: "/"
+  };
+
+  if (cookieDomain) {
+    clearOptions.domain = cookieDomain;
+  }
+
+  res.clearCookie("token", clearOptions);
   res.status(200).json({ message: "Logout successful" });
 }
 

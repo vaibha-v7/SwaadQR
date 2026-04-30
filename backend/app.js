@@ -15,20 +15,28 @@ require("./config/passport");
 const app = express();
 connectDB();
 
-const allowedOrigins = (
-  process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:4000"
-)
-  .split(",")
+const allowedOrigins = [
+  ...(process.env.FRONTEND_URLS || "").split(","),
+  process.env.FRONTEND_URL,
+  "http://localhost:4000"
+]
+  .filter(Boolean)
   .map((origin) => origin.trim())
-  .filter(Boolean);
+  .map((origin) => origin.replace(/\/$/, ""));
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) {
       return callback(null, true);
     }
 
-    return callback(new Error("Not allowed by CORS"));
+    const normalizedOrigin = origin.replace(/\/$/, "");
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true
 }));

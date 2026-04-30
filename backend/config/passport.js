@@ -1,8 +1,10 @@
 const passport = require("passport");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 const Owner = require("../models/owner");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const backendBaseUrl = process.env.BACKEND_URL || "http://localhost:3000";
+const backendBaseUrl = process.env.BACKEND_URL;
 const googleClientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET;
 const googleCallbackUrl = new URL("/auth/google/callback", backendBaseUrl).toString();
