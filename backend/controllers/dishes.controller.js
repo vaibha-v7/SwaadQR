@@ -116,8 +116,21 @@ exports.generateRestaurantDishesQR = async (req, res) => {
       return res.status(403).json({ message: "Not authorized for this restaurant" });
     }
 
-    const menuBaseUrl = (process.env.MENU_BASE_URL).replace(/\/$/, "");
-    const menuUrl = `${menuBaseUrl}/${restaurantId}`;
+    const menuBaseUrl = (
+      process.env.MENU_BASE_URL ||
+      process.env.FRONTEND_URL ||
+      (process.env.FRONTEND_URLS || "").split(",")[0]
+    )
+      ?.trim()
+      .replace(/\/$/, "");
+
+    if (!menuBaseUrl) {
+      return res.status(500).json({
+        message: "Menu base URL is not configured. Set MENU_BASE_URL or FRONTEND_URL."
+      });
+    }
+
+    const menuUrl = `${menuBaseUrl}/menu/${restaurantId}`;
 
     const qrBuffer = await QRCode.toBuffer(menuUrl, {
       type: "png",
