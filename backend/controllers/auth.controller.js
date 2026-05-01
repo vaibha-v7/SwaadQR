@@ -76,35 +76,54 @@ exports.register = async (req, res) => {
 
 
 await resend.emails.send({
-  from: "SwaadQR <onboarding@resend.dev>",
+  from: "SwaadQR <noreply@contact.swaadqr.online>",
   to: email,
-  subject: "Verify your email",
+  subject: "Welcome to SwaadQR - Verify your email",
   html: `
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Verify your email</title>
       <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff; color: #1a1a1a; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #f0f0f0; border-radius: 8px; margin-top: 50px; }
-        .logo { font-size: 24px; font-weight: bold; color: #000000; margin-bottom: 20px; text-align: center; }
-        .content { line-height: 1.6; color: #444444; text-align: center; }
-        .button { display: inline-block; padding: 14px 30px; background-color: #000000; color: #ffffff !important; text-decoration: none; border-radius: 5px; font-weight: 600; margin-top: 25px; }
-        .footer { margin-top: 30px; font-size: 12px; color: #999999; text-align: center; }
+        body { font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f7f9fb; color: #1e293b; margin: 0; padding: 0; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f7f9fb; padding-bottom: 60px; }
+        .main { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); margin-top: 40px; border: 1px solid #f1f5f9; }
+        .header { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 40px 20px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+        .content { padding: 40px 40px 30px; text-align: center; }
+        .content h2 { color: #0f172a; font-size: 24px; font-weight: 700; margin-top: 0; margin-bottom: 16px; }
+        .content p { color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
+        .btn-container { text-align: center; margin: 35px 0; }
+        .btn { display: inline-block; background-color: #f97316; color: #ffffff !important; text-decoration: none; padding: 16px 36px; border-radius: 50px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 4px 14px 0 rgba(249, 115, 22, 0.39); }
+        .divider { height: 1px; background-color: #e2e8f0; margin: 30px 0; }
+        .alt-link { font-size: 13px; color: #64748b; word-break: break-all; text-align: left; background-color: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed #cbd5e1; }
+        .footer { padding: 0 40px 30px; text-align: center; font-size: 13px; color: #94a3b8; }
+        .footer p { margin: 5px 0; }
       </style>
     </head>
     <body>
-      <div class="container">
-        <div class="logo">SwaadQR</div>
-        <div class="content">
-          <h2 style="color: #1a1a1a; margin-bottom: 10px;">Verify your email</h2>
-          <p>Thank you for joining SwaadQR. To finish setting up your account and start creating your digital menus, please verify your email address below.</p>
-          <a href="${verifyURL}" class="button">Verify Email Address</a>
-          <p style="margin-top: 25px; font-size: 14px;">If the button doesn't work, copy and paste this link into your browser:</p>
-          <p style="font-size: 12px; color: #007bff; word-break: break-all;">${verifyURL}</p>
-        </div>
-        <div class="footer">
-          &copy; ${new Date().getFullYear()} SwaadQR. All rights reserved. <br>
-          If you didn't request this email, you can safely ignore it.
+      <div class="wrapper">
+        <div class="main">
+          <div class="header">
+            <h1>SwaadQR</h1>
+          </div>
+          <div class="content">
+            <h2>Let's get started</h2>
+            <p>Welcome to SwaadQR! We're thrilled to have you on board. You're just one step away from creating beautiful, interactive digital menus for your restaurant.</p>
+            <p>Please confirm your email address by clicking the button below:</p>
+            <div class="btn-container">
+              <a href="${verifyURL}" class="btn">Verify Email Address</a>
+            </div>
+            <div class="divider"></div>
+            <p style="font-size: 14px; text-align: left; margin-bottom: 8px;">If the button above doesn't work, copy and paste this link into your browser:</p>
+            <div class="alt-link">${verifyURL}</div>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} SwaadQR. All rights reserved.</p>
+            <p>If you didn't create an account, you can safely ignore this email.</p>
+          </div>
         </div>
       </div>
     </body>

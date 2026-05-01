@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import toast from "react-hot-toast";
 import api from "../api/axios";
@@ -7,8 +7,19 @@ import api from "../api/axios";
 export default function Login() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("verified") === "true") {
+      toast.success("Email verified successfully! You can now log in.");
+    } else if (searchParams.get("error") === "invalid_token") {
+      toast.error("Invalid or expired verification link.");
+    } else if (searchParams.get("error") === "verification_failed") {
+      toast.error("Verification failed. Please try again or contact support.");
+    }
+  }, [searchParams]);
 
   if (!authLoading && isAuthenticated) return <Navigate to="/restaurants" replace />;
 
