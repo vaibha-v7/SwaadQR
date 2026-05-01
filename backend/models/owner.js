@@ -26,8 +26,7 @@ const ownerSchema = new mongoose.Schema(
     googleId: {
       type: String,
       unique: true,
-      sparse: true,
-      default: null
+      sparse: true
     },
     phone_no: {
       type: String,
@@ -35,8 +34,7 @@ const ownerSchema = new mongoose.Schema(
         return this.provider !== "google";
       },
       unique: true,
-      sparse: true,
-      default: null
+      sparse: true
     },
     isEmailVerified: {
       type: Boolean,

@@ -256,7 +256,7 @@ exports.updateProfile = async (req, res) => {
       } else if (owner.provider === "local") {
         return res.status(400).json({ message: "Phone number is required for local accounts" });
       } else {
-        owner.phone_no = null;
+        owner.phone_no = undefined;
       }
     }
 
