@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import gsap from "gsap";
+import api from "../api/axios";
 import VegBadge from "../components/VegBadge";
 import Spinner from "../components/Spinner";
 
@@ -15,8 +15,8 @@ export default function PublicMenu() {
 
   useEffect(() => {
     Promise.all([
-      axios.get(`${import.meta.env.VITE_BACKEND_URL}/swaad/restaurant/${restaurantId}`),
-      axios.get(`${import.meta.env.VITE_BACKEND_URL}/swaad/dishes/restaurant/${restaurantId}`),
+      api.get(`/swaad/restaurant/${restaurantId}`),
+      api.get(`/swaad/dishes/restaurant/${restaurantId}`),
     ])
       .then(([restRes, dishRes]) => {
         setRestaurant(restRes.data);
