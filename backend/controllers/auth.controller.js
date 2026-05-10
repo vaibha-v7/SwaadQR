@@ -137,6 +137,18 @@ await resend.emails.send({
 
   } catch (err) {
     console.error(err);
+    // Handle duplicate key errors (e.g. unique phone_no or email)
+    if (err && err.code === 11000) {
+      const dupField = err.keyValue ? Object.keys(err.keyValue)[0] : null;
+      if (dupField === "phone_no") {
+        return res.status(400).json({ message: "Phone number already in use" });
+      }
+      if (dupField === "email") {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+      return res.status(400).json({ message: "Duplicate field value" });
+    }
+
     res.status(500).json({ message: "Registration failed" });
   }
 };
