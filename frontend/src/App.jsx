@@ -8,6 +8,8 @@ import Restaurants from "./pages/Restaurants";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import PublicMenu from "./pages/PublicMenu";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 function App() {
   const location = useLocation();
@@ -21,6 +23,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/menu/:restaurantId" element={<PublicMenu />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         <Route
           path="/restaurants"
           element={

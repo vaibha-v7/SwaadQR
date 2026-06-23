@@ -3,11 +3,45 @@ import { useAuth } from "../context/auth-context";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import toast from "react-hot-toast";
 
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const headingRef = useRef(null);
+
+  const handleShare = async (e) => {
+    e.preventDefault();
+    const shareData = {
+      title: "SwaadQR",
+      text: "SwaadQR - Your Digital Menu, One Scan Away. High-end contactless menus for modern dining.",
+      url: window.location.origin,
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        toast.success("Shared successfully!");
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          toast.error("Failed to share.");
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success("Website link copied to clipboard!");
+      } catch (err) {
+        toast.error("Could not copy link.");
+      }
+    }
+  };
+
+  const handleWebClick = (e) => {
+    e.preventDefault();
+    window.open(window.location.origin, "_blank", "noopener,noreferrer");
+    toast.success("Opening SwaadQR Web Portal...");
+  };
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -221,22 +255,14 @@ export default function Landing() {
               </div>
 
               <blockquote className="text-2xl md:text-5xl font-extrabold tracking-tight mb-12 leading-tight">
-                &quot;SwaadQR transformed our service. It&apos;s not just a QR code; it&apos;s a statement of quality that our guests
+                &quot;It&apos;s not just a QR code, it &apos; s a statement of quality that guests
                 appreciate from the first scan.&quot;
               </blockquote>
 
-              <div className="flex flex-col items-center">
-                <img
-                  className="w-20 h-20 rounded-full border-4 border-orange-500/20 mb-4 object-cover"
-                  alt="Chef testimonial"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDk53waPTGNtS00sPsxwlOfV0v58YMgRvupHt1jzhoTIVdgMw5_1UcFB0FWzdBKxtcGNn-xXS6rA0pUN7OwyiF8gIrL6Br3-4M1ojKs11dd9XAYtnqHv25mXCiIDC-Vubn4-dOv-_5I2nu995Cn8805BKPlNIpqTk1NefoYrWoEi_jCcL0iDgNkjOF9bfU5U50-X6TYJFaEggIswMSZrrfoHnshLZhvZoGy7OCLOgoW-dz9x6Gk8RJ1IlM6zcUqBqlyrd7uM79gHA_"
-                />
-                <div className="font-bold text-xl">Marco Rossi</div>
-                <div className="text-[#F97316] font-medium">Executive Chef, L&apos;Anima</div>
-              </div>
+              
 
               <div className="mt-16 pt-16 border-t border-white/10 w-full">
-                <div className="text-sm font-bold tracking-[0.2em] uppercase opacity-60 mb-8">Trusted by 500+ restaurants</div>
+                <div className="text-sm font-bold tracking-[0.2em] uppercase opacity-60 mb-8">Trusted by restaurants</div>
                 <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-40 grayscale contrast-125">
                   <span className="text-2xl font-black">LUMINA</span>
                   <span className="text-2xl font-black">ORCHID</span>
@@ -258,30 +284,29 @@ export default function Landing() {
           </div>
 
           <div className="flex gap-8">
-            <a className="text-zinc-500 hover:text-orange-500 transition-colors" href="#">
+            <Link className="text-zinc-500 hover:text-orange-500 transition-colors" to="/privacy">
               Privacy Policy
-            </a>
-            <a className="text-zinc-500 hover:text-orange-500 transition-colors" href="#">
+            </Link>
+            <Link className="text-zinc-500 hover:text-orange-500 transition-colors" to="/terms">
               Terms of Service
-            </a>
-            <a className="text-zinc-500 hover:text-orange-500 transition-colors" href="#">
-              Contact Us
-            </a>
+            </Link>
           </div>
 
           <div className="flex gap-4">
-            <a
-              className="w-10 h-10 rounded-full bg-zinc-200/70 flex items-center justify-center text-zinc-600 hover:bg-orange-500 hover:text-white transition-all"
-              href="#"
+            <button
+              onClick={handleShare}
+              className="w-10 h-10 rounded-full bg-zinc-200/70 flex items-center justify-center text-zinc-600 hover:bg-orange-500 hover:text-white transition-all cursor-pointer border-0"
+              aria-label="Share Website"
             >
               <span className="material-symbols-outlined text-xl">share</span>
-            </a>
-            <a
-              className="w-10 h-10 rounded-full bg-zinc-200/70 flex items-center justify-center text-zinc-600 hover:bg-orange-500 hover:text-white transition-all"
-              href="#"
+            </button>
+            <button
+              onClick={handleWebClick}
+              className="w-10 h-10 rounded-full bg-zinc-200/70 flex items-center justify-center text-zinc-600 hover:bg-orange-500 hover:text-white transition-all cursor-pointer border-0"
+              aria-label="Open Website"
             >
               <span className="material-symbols-outlined text-xl">language</span>
-            </a>
+            </button>
           </div>
         </div>
       </footer>
