@@ -53,7 +53,15 @@ export default function Register() {
       setDone(true);
       toast.success("Registered! Check your email to verify.");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Registration failed");
+      const message = err.response?.data?.message || "Registration failed";
+      const lower = String(message).toLowerCase();
+      if (lower.includes("phone")) {
+        setErrors((prev) => ({ ...prev, phone_no: message }));
+      } else if (lower.includes("email") || lower.includes("owner already")) {
+        setErrors((prev) => ({ ...prev, email: message }));
+      } else {
+        toast.error(message);
+      }
     } finally {
       setLoading(false);
     }

@@ -7,7 +7,7 @@ if (!backendUrl && import.meta.env.PROD) {
 }
 
 const api = axios.create({
-  baseURL: backendUrl || "http://localhost:3000",
+  baseURL: backendUrl,
   withCredentials: true,
 });
 

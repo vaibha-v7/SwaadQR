@@ -33,8 +33,6 @@ passport.use(
             email,
             googleId,
             provider: "google",
-            phone_no: null,
-            password: null,
             isEmailVerified: true
           });
         } else {
